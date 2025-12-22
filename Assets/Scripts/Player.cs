@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public class Player : MonoBehaviour
 {
@@ -7,6 +9,8 @@ public class Player : MonoBehaviour
     public float moveSpeed = 1f;
     public float jumpForce = 1f;
     public GameObject panel;
+    public List<GameObject> list_Stars = new List<GameObject>();
+
     void Start()
     {
 
@@ -16,6 +20,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         float h = Input.GetAxis("Horizontal"); // -1 ~ 1
+        //float v = Input.GetAxis("Vertical");
         rb.linearVelocityX = h * moveSpeed;
         if (transform.position.y < -5)
         {
@@ -31,13 +36,18 @@ public class Player : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Finish"))
         {
-            panel.SetActive(true);
-            Time.timeScale = 0; // ½Ã°£ ¸ØÃã
+            int idx = Array.IndexOf(list_Stars.ToArray(), collision.gameObject);
+            list_Stars.RemoveAt(idx);
+            Destroy(collision.gameObject);
+            if (list_Stars.Count == 0)
+            {
+                panel.SetActive(true);
+                Time.timeScale = 0; // ½Ã°£ ¸ØÃã
+            }
         }
         else
         {
             rb.AddForceY(1 * jumpForce);
         }
-
     }
 }
